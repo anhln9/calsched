@@ -53,7 +53,7 @@
                 </form>
 
                 <div id="success" class="alert alert-success">Success!</div>
-                <div id="fail" class="alert alert-danger">Nothing is happening. Please stay home and sleep.</div>
+                <div id="fail" class="alert alert-danger">Nothing is happening. Are you sure you're not sleepy?</div>
                 <div id="noBuilding" class="alert alert-danger">Please REALLY enter a building name.</div>
 
             </div>
