@@ -37,15 +37,13 @@
         <div class="row">
 
             <div class="col-md-6 col-md-offset-3">
-                <h3>Find classes that are happening in a building</h3>
+                <h3>Find classes that are happening across campus</h3>
 
                 <h4>Current: Fall 2015 Schedule</h4>
 
                 <form>
                     <div class="form-group">
                         <input type="text" id="building" name="building" class="form-control" placeholder="E.g. Dwinelle, Stanley, ..."/>
-                        <input type="text" id="weekday" name="weekday" class="form-control" placeholder="E.g. M, MW, TuTh, ..."/>
-                        <input type="text" id="time" name="time" class="form-control" placeholder="E.g. 930-11, 5-630, 11-1230 ..."/>
                     </div>
 
                     <button id="findSchedule" class="btn btn-success btn-lg">Find Schedule</button>
@@ -199,9 +197,7 @@ Mr. & Mrs. Isadore Zellerbach Hall  ZELLERBACH
                 $.ajax({
                     url: 'scraper.php',
                     data: {
-                        'building': $("#building").val(),
-                        'weekday': $("#weekday").val(),
-                        'time': $("#time").val()
+                        'building': $("#building").val()
                     },
                     success: function(response) {
                         if (response == '') {
