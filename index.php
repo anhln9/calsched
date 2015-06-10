@@ -116,7 +116,7 @@
 
                 <?php //Chooses a random number 
 
-                $num = Rand (1,9); 
+                $num = Rand (1,10); 
                 //Based on the random number, gives a quote 
                 switch ($num) {
                     case 1: echo "Go feed the birds.";
@@ -136,6 +136,8 @@
                     case 8: echo "Time for tea.";
                     break;
                     case 9: echo "No soup for you!";
+                    break;
+                    case 10: echo "Quiz time: What does Cafe 3 serve today? A. Roasted chicken B. Grilled chicken C. Fried chicken D. Curry chicken";
                     break;
                 }
 

@@ -9,40 +9,26 @@ $hr = date( "G" ); // 24-hour format, 0 through 23
 if ($dw == "Sunday") {
 	$weekday = "Su";
 } elseif ($dw == "Monday") {
-	$weekday = ["M", "MW", "MWF", "MTuWTh", "MTWTF"];
+	$weekday = "M";
 } elseif ($dw == "Tuesday") {
-	$weekday = ["Tu", "TuTh", "MTWTF", "MTuWTh"];
+	$weekday = "Tu";
 } elseif ($dw == "Wednesday") {
-	$weekday = ["W", "MW", "MWF", "MTuWTh", "MTWTF"];
+	$weekday = "W";
 } elseif ($dw == "Thursday") {
-	$weekday = ["Th", "TuTh", "MTWTF", "MTuWTh"];
+	$weekday = "Th";
 } elseif ($dw == "Friday") {
-	$weekday = ["F", "MWF", "MTWTF"];
+	$weekday = "F";
 } elseif ($dw == "Saturday") {
 	$weekday = "Sa";
 }
 
-if ($hr == 13) {
-	$time = ["12-2", "12-3", "1-2", "1-3", "1-4", "1130-1", "12-130", "1230-2", "1-230"];
-} elseif ($hr == 14) {
-	$time = ["1-3", "1-4", "2-3", "2-4", "2-5", "1230-2", "1-230", "130-3", "2-330"];
-} elseif ($hr <= 11 && $hr >= 7) {
-	$h = $hr;
-	$time = [(string) ($h-1) . "-" . (string) ($h+1), (string) $h . "-" . (string) ($h+1), (string) $h . "-" . (string) ($h+2), (string) $h . "-" . (string) ($h+3), (string) ($h-2) . "30-" . (string) $h,
-	(string) ($h-1) . "-" . (string) $h . "30", (string) ($h-1) . "30-" . (string) ($h+1), (string) $h . "-" . (string) ($h+1) . "30"];
-} elseif ($hr >= 15 && $hr <= 19) {
-	$h = $hr-12;
-	$time = [(string) ($h-1) . "-" . (string) ($h+1), (string) $h . "-" . (string) ($h+1), (string) $h . "-" . (string) ($h+2), (string) $h . "-" . (string) ($h+3), (string) ($h-2) . "30-" . (string) $h,
-	(string) ($h-1) . "-" . (string) $h . "30", (string) ($h-1) . "30-" . (string) ($h+1), (string) $h . "-" . (string) ($h+1) . "30"];
-} elseif ($hr == 12) {
-	$time = ["12-1", "12-2", "12-3", "11-1230", "1130-1", "12-130"];
+if ($hr > 12) {
+	$classtime = $hr - 12;
+} elseif ($hr < 12) {
+	$classtime = $hr;
 }
 
-foreach ( $weekday as $day) {
-	foreach ( $time as $classtime ) {
-		$contents.= file_get_contents("http://osoc.berkeley.edu/OSOC/osoc?p_term=FL&p_day=".$day."&p_bldg=".$building."&p_hour=".$classtime);
-	}
-}
+$contents = file_get_contents("http://osoc.berkeley.edu/OSOC/osoc?p_term=FL&p_day=".$weekday."&p_bldg=".$building."&p_hour=".$classtime);
 
 preg_match_all('/CLASS="coursetitle"><B>(.*?)&nbsp;<INPUT TYPE="submit" VALUE="\(catalog description\)" class="button b buttonrender"><\/B><\/TD><\/TR><\/FORM><TR><TD ALIGN=RIGHT VALIGN=TOP NOWRAP>
            <FONT FACE="Helvetica, Arial, sans-serif" SIZE="1"><B>Location:&#160;<\/B><\/FONT><\/TD><TD NOWRAP><TT>(.*?)</m', $contents, $titles);
