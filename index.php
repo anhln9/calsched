@@ -50,8 +50,37 @@
 
                 </form>
 
+                <h4>Today is <?php date_default_timezone_set("America/Los_Angeles"); echo date("l"). ", " .date("h:i"). " " . date("a"); ?></h4>
+
                 <div id="success" class="alert alert-success">Success!</div>
-                <div id="fail" class="alert alert-danger">Nothing is happening. Are you sure you're not sleepy?</div>
+                <div id="fail" class="alert alert-danger">
+
+                <?php //Chooses a random number 
+
+                $num = Rand (1,8); 
+                //Based on the random number, gives a quote 
+                switch ($num) {
+                    case 1: echo "Time is money.";
+                    break;
+                    case 2: echo "An apple a day keeps the doctor away.";
+                    break;
+                    case 3: echo "Elmo loves dorthy.";
+                    break;
+                    case 4: echo "Off to see the wizard.";
+                    break;
+                    case 5: echo "Tomorrow is another day.";
+                    break;
+                    case 6: echo "Oh yeah, I need to sleep. Zzzzz.";
+                    break;
+                    case 7: echo "Do you honestly think that people still teach at this hour?";
+                    break;
+                    case 8: echo "I want BBQ chicken dipped in sweet and spicy sauce with ten cheese sticks on the side."
+                }
+
+                ?>
+
+                </div>
+
                 <div id="noBuilding" class="alert alert-danger">Please REALLY enter a building name.</div>
 
             </div>
