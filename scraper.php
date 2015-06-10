@@ -4,8 +4,7 @@ date_default_timezone_set("America/Los_Angeles");
 $building = $_REQUEST['building'];
 $building = str_replace(" ", "", $building);
 $dw = date( "l" ); // Sunday through Saturday
-// $hr = date( "G" ); // 24-hour format, 0 through 23
-$hr = 19;
+$hr = date( "G" ); // 24-hour format, 0 through 23
 
 if ($dw == "Sunday") {
 	$weekday = "Su";
