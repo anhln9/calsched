@@ -74,7 +74,7 @@
                     break;
                     case 7: echo "Do you honestly think that people still teach at this hour?";
                     break;
-                    case 8: echo "I want BBQ chicken dipped in sweet and spicy sauce with ten cheese sticks on the side."
+                    case 8: echo "I want BBQ chicken dipped in sweet and spicy sauce with ten cheese sticks on the side.";
                 }
 
                 ?>
