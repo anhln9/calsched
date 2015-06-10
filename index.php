@@ -213,6 +213,7 @@
     <script>
     $(document).ready(function() {
         $("div a").click(function() {
+            alert('clicked');
             var value = $(this).html();
             var input = $('#building');
             input.val(value);
