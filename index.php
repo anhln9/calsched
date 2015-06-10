@@ -24,7 +24,7 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
 
     <style>
@@ -213,7 +213,6 @@
     <script>
     $(document).ready(function() {
         $("div a").click(function() {
-            alert('clicked');
             var value = $(this).html();
             var input = $('#building');
             input.val(value);

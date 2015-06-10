@@ -4,7 +4,8 @@ date_default_timezone_set("America/Los_Angeles");
 $building = $_REQUEST['building'];
 $building = str_replace(" ", "", $building);
 $dw = date( "l" ); // Sunday through Saturday
-$hr = date( "G" ); // 24-hour format, 0 through 23
+// $hr = date( "G" ); // 24-hour format, 0 through 23
+$hr = 19;
 
 if ($dw == "Sunday") {
 	$weekday = "Su";
@@ -13,7 +14,7 @@ if ($dw == "Sunday") {
 } elseif ($dw == "Tuesday") {
 	$weekday = ["Tu", "TuTh", "MTWTF", "MTuWTh"];
 } elseif ($dw == "Wednesday") {
-	$weekday = ["MW", "MWF", "MTuWTh", "MTWTF"];
+	$weekday = ["W", "MW", "MWF", "MTuWTh", "MTWTF"];
 } elseif ($dw == "Thursday") {
 	$weekday = ["Th", "TuTh", "MTWTF", "MTuWTh"];
 } elseif ($dw == "Friday") {
@@ -23,19 +24,19 @@ if ($dw == "Sunday") {
 }
 
 if ($hr == 13) {
-	$time = ["1-2", "1130-1", "12-130", "1230-2", "1-230"];
+	$time = ["12-2", "12-3", "1-2", "1-3", "1-4", "1130-1", "12-130", "1230-2", "1-230"];
 } elseif ($hr == 14) {
-	$time = ["2-3", "1230-2", "1-230", "130-3", "2-330"];
-} elseif ($hr <= 11) {
+	$time = ["1-3", "1-4", "2-3", "2-4", "2-5", "1230-2", "1-230", "130-3", "2-330"];
+} elseif ($hr <= 11 && $hr >= 7) {
 	$h = $hr;
-	$time = [ (string) $h . "-" . (string) ($h+1), (string) ($h-2) . "30-" . (string) $h,
+	$time = [(string) ($h-1) . "-" . (string) ($h+1), (string) $h . "-" . (string) ($h+1), (string) $h . "-" . (string) ($h+2), (string) $h . "-" . (string) ($h+3), (string) ($h-2) . "30-" . (string) $h,
 	(string) ($h-1) . "-" . (string) $h . "30", (string) ($h-1) . "30-" . (string) ($h+1), (string) $h . "-" . (string) ($h+1) . "30"];
-} elseif ($hr >= 15) {
+} elseif ($hr >= 15 && $hr <= 19) {
 	$h = $hr-12;
-	$time = [ (string) $h . "-" . (string) ($h+1), (string) ($h-2) . "30-" . (string) $h,
+	$time = [(string) ($h-1) . "-" . (string) ($h+1), (string) $h . "-" . (string) ($h+1), (string) $h . "-" . (string) ($h+2), (string) $h . "-" . (string) ($h+3), (string) ($h-2) . "30-" . (string) $h,
 	(string) ($h-1) . "-" . (string) $h . "30", (string) ($h-1) . "30-" . (string) ($h+1), (string) $h . "-" . (string) ($h+1) . "30"];
 } elseif ($hr == 12) {
-	$time = ["12-1", "1030-12", "11-1230", "1130-1", "12-130"];
+	$time = ["12-1", "12-2", "12-3", "11-1230", "1130-1", "12-130"];
 }
 
 foreach ( $weekday as $day) {
