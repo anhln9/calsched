@@ -4,7 +4,7 @@ date_default_timezone_set("America/Los_Angeles");
 $building = $_REQUEST['building'];
 $building = str_replace(" ", "", $building);
 $dw = date( "l" ); // Sunday through Saturday
-$hr = date( "g" ); // 12-hour format, 1 through 12
+$hr = date( "G" ); // 24-hour format, 0 through 23
 
 if ($dw == "Sunday") {
 	$weekday = "Su";
@@ -22,13 +22,18 @@ if ($dw == "Sunday") {
 	$weekday = "Sa";
 }
 
-if ($hr == 1) {
+if ($hr == 13) {
 	$time = ["1-2", "1130-1", "12-130", "1230-2", "1-230"];
-} elseif ($hr == 2) {
+} elseif ($hr == 14) {
 	$time = ["2-3", "1230-2", "1-230", "130-3", "2-330"];
 } elseif ($hr <= 11) {
-	$time = [ (string) $hr . "-" . (string) ($hr+1), (string) ($hr-2) . "30-" . (string) $hr,
-	(string) ($hr-1) . "-" . (string) $hr . "30", (string) ($hr-1) . "30-" . (string) ($hr+1), (string) $hr . "-" . (string) ($hr+1) . "30"];
+	$h = $hr;
+	$time = [ (string) $h . "-" . (string) ($h+1), (string) ($h-2) . "30-" . (string) $h,
+	(string) ($h-1) . "-" . (string) $h . "30", (string) ($h-1) . "30-" . (string) ($h+1), (string) $h . "-" . (string) ($h+1) . "30"];
+} elseif ($hr >= 15) {
+	$h = $hr-12;
+	$time = [ (string) $h . "-" . (string) ($h+1), (string) ($h-2) . "30-" . (string) $h,
+	(string) ($h-1) . "-" . (string) $h . "30", (string) ($h-1) . "30-" . (string) ($h+1), (string) $h . "-" . (string) ($h+1) . "30"];
 } elseif ($hr == 12) {
 	$time = ["12-1", "1030-12", "11-1230", "1130-1", "12-130"];
 }

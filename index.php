@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Find classes in progress</title>
+    <!-- App is deployed at https://calsched.herokuapp.com -->
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
@@ -20,10 +21,31 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+
     <style>
 
     .alert {
         display:none;
+    }
+
+    .center {
+        text-align: center;
+    }
+
+    ul {
+        list-style-type: none;
+    }
+
+    hr {
+        margin-top: 20px;
+        border: 0;
+        border-top: 2px solid #addff9;
+        border-bottom: 2px solid #ffffff;
     }
 
     </style>
@@ -50,200 +72,175 @@
 
                 </form>
 
-                <h4>Today is <?php date_default_timezone_set("America/Los_Angeles"); echo date("l"). ", " .date("h:i"). " " . date("a"); ?></h4>
+                <h4>Today is 
+                    <?php date_default_timezone_set("America/Los_Angeles"); echo date("l"). ", "; ?>
+                    <span id="hours"><?=date('H');?></span>:<span id="minutes"><?=date('i');?></span>:<span id="seconds"><?=date('s');?></span>
+                </h4>
+
+                <script>
+                var thetime = '13:14:15';
+                // this would be something like: var thetime = '<?=date('H:i:s');?>';
+                var arr_time = thetime.split(':');
+                var ss = arr_time[2]; var mm = arr_time[1]; var hh = arr_time[0];
+                var update_ss = setInterval(updatetime, 1000);
+
+                function updatetime() {
+                    ss++;
+                    if (ss < 10) {
+                        ss = '0' + ss;
+                    }
+                    if (ss == 60) {
+                        ss = '00'; mm++;
+                        if (mm < 10) {
+                            mm = '0' + mm;
+                        }
+                        if (mm == 60) {
+                            mm = '00'; hh++;
+                            if (hh < 10) {
+                                hh = '0' + hh;
+                            }
+                            if (hh == 24) {
+                                hh = '00';
+                            }
+                            $("#hours").html(hh);
+                        }
+                        $("#minutes").html(mm);
+                    }
+                    $("#seconds").html(ss);
+                }
+
+                </script>
 
                 <div id="success" class="alert alert-success">Success!</div>
-                <div id="fail" class="alert alert-danger">
+                <div id="fail" class="alert alert-danger">Sorry, couldn't find any class. 
 
                 <?php //Chooses a random number 
 
-                $num = Rand (1,8); 
+                $num = Rand (1,9); 
                 //Based on the random number, gives a quote 
                 switch ($num) {
-                    case 1: echo "Time is money.";
+                    case 1: echo "Go feed the birds.";
                     break;
-                    case 2: echo "An apple a day keeps the doctor away.";
+                    case 2: echo "Andddd an apple a day keeps the doctor away.";
                     break;
-                    case 3: echo "Elmo loves dorthy.";
+                    case 3: echo "Elmo loves Dorthy.";
                     break;
-                    case 4: echo "Off to see the wizard.";
+                    case 4: echo "I'm off to see the wizards.";
                     break;
-                    case 5: echo "Tomorrow is another day.";
+                    case 5: echo "But tomorrow is another day.";
                     break;
                     case 6: echo "Oh yeah, I need to sleep. Zzzzz.";
                     break;
-                    case 7: echo "Do you honestly think that people still teach at this hour?";
+                    case 7: echo "Want some BBQ chicken dipped in sweet and spicy sauce with ten cheese sticks on the side?";
                     break;
-                    case 8: echo "I want BBQ chicken dipped in sweet and spicy sauce with ten cheese sticks on the side.";
+                    case 8: echo "Time for tea.";
+                    break;
+                    case 9: echo "No soup for you!";
+                    break;
                 }
 
                 ?>
 
                 </div>
 
-                <div id="noBuilding" class="alert alert-danger">Please REALLY enter a building name.</div>
+                <div id="noBuilding" class="alert alert-danger">That's not really a building name, check the list below!</div>
 
             </div>
 
-            <div class="col-md-10 col-md-offset-1">
-
-                <h4>List of buildings:</h4>
-
-            Bancroft Library    BANCROFT LIB
-Horace A. Barker Hall   BARKER
-David Prescott Barrows Hall     BARROWS
-Stephan D. Bechtel Engineering Center   BECHTEL
-Sibley Auditorium (Bechtel)     BECHTEL AUD
-Raymond Thayer Birge Hall   BIRGE
-Richard C. Blum Hall    BLUM
-Boalt Hall, Law School  BOALT
-Botanical Gardens   BOT GARDEN
-California Hall     CALIFORNIA
-Calvin Laboratory   CALVIN LAB
-William Wallace Campbell Hall   CAMPBELL
-William Wallace Campbell Annex  CAMPBELL ANX
-Channing Courts (Ellsworth Street)  CHANNING CTS
-Cesar E. Chavez Student Center  CHAVEZ
-Earl F. Cheit Classroom Wing    CHEIT
-Clarence Linus Cory Hall    CORY
-Raymond Earl Davis Hall     DAVIS
-Doe (Main) Library  DOE LIBRARY
-Donner Laboratory   DONNER LAB
-Henry Durant Hall   DURANT
-Durham Studio Theatre (Dwinelle)    DURHAM THTRE
-John W. Dwinelle Hall   DWINELLE
-Dwinelle Hall Annex     DWINELLE AN
-Eshleman Hall   ESHLEMAN
-Bernard Alfred Etcheverry Hall  ETCHEVERRY
-Griffith Conrad Evans Hall  EVANS
-The Faculty Club    FACULTY CLUB
-Foothill Residential Complex Building 1     FOOTHILL 1
-Foothill Residential Complex Building 4     FOOTHILL 4
-David Gardner Stacks (Doe Library)  GARDNERSTACK
-A. P. Giannini Hall     GIANNINI
-William F. Giauque Hall     GIAUQUE
-Daniel Coit Gilman Hall     GILMAN
-Genetic and Plant Biology Building  GPB
-Goldman School of Public Policy     GSPP
-Haas School of Business Faculty Wing    HAAS
-Haas Pavilion   HAAS PAVIL
-Handball Courts (RSF)   HANDBALL CTS
-Jean Hargrove Music Library     HARGROVE LIB
-J. T. and Hannah N. Haviland Hall   HAVILAND
-Hearst Field Annex  HEARST ANNEX
-Hearst East Pool    HEARST EPOOL
-Phoebe Apperson Hearst Gymnasium    HEARST GYM
-Hearst Memorial Mining Building     HEARST MIN
-Hearst Pool     HEARST POOL
-Hearst Gym Tennis Courts    HEARSTGYMCTS
-Phoebe Apperson Hearst Museum of Anthropology   HEARSTMUSEUM
-Alfred Hertz Memorial Hall  HERTZ
-Hesse Hall  HESSE
-Joel Henry Hildebrand Hall  HILDEBRAND
-Hilgard Hall    HILGARD
-International House     INTN'L HOUSE
-Clark Kerr Campus Building 1    KERR CAMPUS
-Daniel E. Koshland Jr. Hall     KOSHLAND
-Alfred L. Kroeber Hall  KROEBER
-Wendell M. Latimer Hall     LATIMER
-John Lawrence LeConte Hall  LECONTE
-Gilbert N. Lewis Hall   LEWIS
-Lawrence Hall of Science    LHS
-Life Sciences Building Addition     LSA
-John McCone Hall    MCCONE
-McEnerney Hall (1750 Arch Street)   MCENERNEY
-Donald Hamilton McLaughlin Hall     MCLAUGHLIN
-California Memorial Stadium     MEMORIAL STD
-Ralph S. Minor Hall     MINOR
-Ralph S. Minor Hall Addition    MINOR ADDITN
-Martin Luther King Student Union    MLK ST UNION
-James K. Moffitt Undergraduate Library  MOFFITT
-Agnes Fay Morgan Hall   MORGAN
-May T. Morrison Hall    MORRISON
-Bernard Moses Hall  MOSES
-Walter Mulford Hall     MULFORD
-North Gate Hall     NORTH GATE
-O'Brien Hall    OBRIEN
-Off Campus  OFF CAMPUS
-Pacific Film Archive    PAC FILM ARC
-Pauley Ballroom (ASUC)  PAULEY
-Plant and Microbial Biology Greenhouse  PB GREENHOUS
-George C. Pimentel Hall     PIMENTEL
-Zellerbach Playhouse    PLAYHOUSE
-Racquetball Courts (RSF)    RAQBALL CTS
-Recreational Sports Facility    REC SPRT FAC
-Richmond Field Station 112  RFS 112
-Recreational Sports Facility Field House    RSF FLDHOUSE
-Charles and Helen Soda Hall     SODA
-South Annex     SOUTH ANNEX
-South Hall  SOUTH HALL
-Spieker Aquatics Complex (RSF)  SPIEKER POOL
-Robert Gordon Sproul Hall   SPROUL
-Squash Courts (RSF)     SQUASH CTS
-Wendell Meredith Stanley Hall   STANLEY
-Cornelius Vander Starr East Asian Library   STARR LIB
-Stephens Hall   STEPHENS
-Sutardja Dai Hall   SUTARDJA DAI
-Tan Kah Kee Hall    TAN
-Tang Center (University Health Services)    TANG CENTER
-Edward Chace Tolman Hall    TOLMAN
-UC Berkeley Art Museum  UCB ART MUSE
-Residence Hall Unit I Cheney    UNIT I CHNY
-Residence Hall Unit I Christian     UNIT I CHRST
-Residence Hall Unit I Central   UNIT I CNTRL
-Residence Hall Unit II Central  UNIT II CNTL
-Residence Hall Unit II Towle    UNIT II TOWL
-Residence Hall Unit II Wada     UNIT II WADA
-Residence Hall Unit III Dining  UNIT III DIN
-University Hall     UNIV HALL
-Valley Life Sciences Building   VALLEY LSB
-Harry Richard Wellman Hall  WELLMAN
-Wellman Courtyard Trailers  WELLMAN CRT
-Benjamin Ide Wheeler Hall   WHEELER
-William W. and Catherine Bauer Wurster Hall     WURSTER
-Mr. & Mrs. Isadore Zellerbach Hall  ZELLERBACH
-
-</div>
         </div>
-    </div>
 
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
+        <div class="row">
 
-    <script>
+            <h3>List of buildings:</h3>
 
-        $("#findSchedule").click(function(event) {
-
-            event.preventDefault();
-
-            $(".alert").hide();
-
-            if ($("#building").val() != "") {
-
-                $.ajax({
-                    url: 'scraper.php',
-                    data: {
-                        'building': $("#building").val()
-                    },
-                    success: function(response) {
-                        if (response == '') {
-                            $("#fail").fadeIn();
-                        }
-                        else {
-                            $("#success").html(response).fadeIn();
-                        }
-                    }
+            <div class="col-md-4" id="buildingListAtoG"><h4 class="center">A-G</h4></span></div>
+            <script type="text/javascript">
+            $.getJSON( "buildingsAtoG.json", function( data ) {
+                console.log(data);
+                var items = [];
+                $.each( data, function( key, row ) {
+                    items.push( " <li>"+row.Name+" <a href='#'>"+row.Abbr+"</a></li>" );
                 });
 
-            } else {
+                $( "<ul/>", {
+                    html: items.join( "" )
+                }).appendTo( "#buildingListAtoG" );
+            });
+            </script>
 
-                $("#noBuilding").fadeIn();
-            }
+            <div class="col-md-4" id="buildingListHtoM"><h4 class="center">H-M</h4></div>
+            <script type="text/javascript">
+            $.getJSON( "buildingsHtoM.json", function( data ) {
+                console.log(data);
+                var items = [];
+                $.each( data, function( key, row ) {
+                    items.push( " <li>"+row.Name+" <a href='#'>"+row.Abbr+"</a></li>" );
+                });
 
+                $( "<ul/>", {
+                    html: items.join( "" )
+                }).appendTo( "#buildingListHtoM" );
+            });
+            </script>
+
+            <div class="col-md-4" id="buildingListNtoZ"><h4 class="center">N-Z</h4></div>
+            <script type="text/javascript">
+            $.getJSON( "buildingsNtoZ.json", function( data ) {
+                console.log(data);
+                var items = [];
+                $.each( data, function( key, row ) {
+                    items.push( " <li>"+row.Name+" <a href='#'>"+row.Abbr+"</a></li>" );
+                });
+
+                $( "<ul/>", {
+                    html: items.join( "" )
+                }).appendTo( "#buildingListNtoZ" );
+            });
+            </script>
+
+        </div>
+
+        <hr>
+
+        <footer id="footer">
+            <p class="center"><b>Source code <a href="https://github.com/anhln9/calsched">on Github</a></b></p>
+        </footer>
+
+        <hr>
+
+    </div>
+
+    <script>
+    $(document).ready(function() {
+        $("div a").click(function() {
+            var value = $(this).html();
+            var input = $('#building');
+            input.val(value);
         });
+    });
+
+    $("#findSchedule").click(function(event) {
+        event.preventDefault();
+        $(".alert").hide();
+        if ($("#building").val() != "") {
+            $.ajax({
+                url: 'scraper.php',
+                data: {
+                    'building': $("#building").val()
+                },
+                success: function(response) {
+                    if (response == '') {
+                        $("#fail").fadeIn();
+                    }
+                    else {
+                        $("#success").html(response).fadeIn();
+                    }
+                }
+            });
+        } else {
+            $("#noBuilding").fadeIn();
+        }
+    });
 
     </script>
 
