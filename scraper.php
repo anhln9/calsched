@@ -3,28 +3,41 @@ date_default_timezone_set("America/Los_Angeles");
 
 $building = $_REQUEST['building'];
 $building = str_replace(" ", "", $building);
-$dw = date( "l" ); // Sunday through Saturday
-$hr = date( "G" ); // 24-hour format, 0 through 23
 
-if ($dw == "Sunday") {
-	$weekday = "Su";
-} elseif ($dw == "Monday") {
-	$weekday = "M";
-} elseif ($dw == "Tuesday") {
-	$weekday = "Tu";
-} elseif ($dw == "Wednesday") {
-	$weekday = "W";
-} elseif ($dw == "Thursday") {
-	$weekday = "Th";
-} elseif ($dw == "Friday") {
-	$weekday = "F";
-} elseif ($dw == "Saturday") {
-	$weekday = "Sa";
+if (!isset($_REQUEST['dw'])) {
+	$dw = date( "l" ); // Sunday through Saturday
+} else {
+	$dw = $_REQUEST['dw'];
+}
+if (!isset($_REQUEST['hr'])) {
+	$hr = date( "G" ); // 24-hour format, 0 through 23
+} else {
+	$hr = $_REQUEST['hr'];
 }
 
-if ($hr > 12) {
+$dw = strtolower($dw);
+
+if (in_array($dw, array("sunday", "su", "sun"))) {
+	$weekday = "su";
+} elseif (in_array($dw, array("monday", "m", "mo", "mon"))) {
+	$weekday = "m";
+} elseif (in_array($dw, array("tuesday", "t", "tu", "tues"))) {
+	$weekday = "Tu";
+} elseif (in_array($dw, array("wednesday", "w", "wed"))) {
+	$weekday = "W";
+} elseif (in_array($dw, array("thursday", "th", "thu", "thurs"))) {
+	$weekday = "Th";
+} elseif (in_array($dw, array("friday", "f", "fr", "fri"))) {
+	$weekday = "F";
+} elseif (in_array($dw, array("saturday", "s", "sa", "sat"))) {
+	$weekday = "Sa";
+} elseif ($dw != '') { // avoids people playing with irrelevant inputs
+	$weekday = "none";
+}
+
+if ($hr > 12 && $hr < 20) {
 	$classtime = $hr - 12;
-} elseif ($hr < 12) {
+} elseif ($hr < 12 || $hr >= 20) {
 	$classtime = $hr;
 }
 
@@ -36,25 +49,5 @@ preg_match_all('/CLASS="coursetitle"><B>(.*?)&nbsp;<INPUT TYPE="submit" VALUE="\
 foreach ($titles[1] as $index => $title) {
 	echo $title . " | " . $titles[2][$index], '<br>';
 }
-
-// $str = '<a href="http://google.com">Google</a>';
-// if (preg_match('#<a href="(.*?)">(.*?)</a>#', $str, $matches)) {
-//     var_dump($matches);
-// }
-
-// preg_match_all('/CLASS="coursetitle"><B>(.*?)</s', $contents, $titles);
-
-// preg_match_all('/Location:&#160;<\/B><\/FONT><\/TD><TD NOWRAP><TT>(.*?)</s', $contents, $timespaces);
-
-// foreach( $titles as $index => $title ) {
-//    echo $title . " | " . $timespaces[1][$index], '<br>';
-// }
-
-// preg_match_all("/\(?  (\d{3})?  \)?  (?(1)  [\-\s] ) \d{3}-\d{4}/x",
-                // "Call 555-1212 or 1-800-555-1212", $phones);
-
-// foreach($phones[0] as $phone) {
-//     echo $phone, '<br>';
-// }
 
 ?>

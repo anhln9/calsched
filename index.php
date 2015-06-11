@@ -8,25 +8,11 @@
     <title>Find classes in progress</title>
     <!-- App is deployed at https://calsched.herokuapp.com -->
 
-    <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    
-    <!-- Optional theme -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
-
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    
     <style>
 
     .alert {
@@ -58,24 +44,47 @@
 
         <div class="row">
 
-            <div class="col-md-6 col-md-offset-3">
-                <h3>Find classes that are happening across campus</h3>
+            <div class="col-md-6 col-md-offset-3 center">
+                <h3>Find classes in progress across campus</h3>
 
                 <h4>Current: Fall 2015 Schedule</h4>
-
-                <form>
-                    <div class="form-group">
-                        <input type="text" id="building" name="building" class="form-control" placeholder="E.g. Dwinelle, Stanley, ..."/>
-                    </div>
-
-                    <button id="findSchedule" class="btn btn-success btn-lg">Find Schedule</button>
-
-                </form>
 
                 <h4>Today is 
                     <?php date_default_timezone_set("America/Los_Angeles"); echo date("l"). ", "; ?>
                     <span id="hours"><?=date('H');?></span>:<span id="minutes"><?=date('i');?></span>:<span id="seconds"><?=date('s');?></span>
                 </h4>
+
+                <div>
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#realtime">Real time</a></li>
+                        <li><a data-toggle="tab" href="#plan">Plan</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div id="realtime" class="tab-pane fade in active">
+                            <form>
+                                <div class="form-group">
+                                    <input type="text" id="buildingRealtime" name="buildingRealtime" class="form-control" placeholder="Where: Leconte, Hearst, Evans, Tan,..."/>
+                                </div>
+                            </form>
+
+                            <button id="findScheduleRealtime" class="btn btn-primary btn-lg center">Find Schedule</button>
+                        </div>
+
+                        <div id="plan" class="tab-pane fade in">
+                            <form>
+                                <div class="form-group">
+                                    <input type="text" id="buildingPlan" name="buildingPlan" class="form-control" placeholder="Where: Dwinelle, Stanley, Barrows, Soda,..."/>
+                                    <input type="text" id="dw" name="dw" class="form-control" placeholder="When: Monday, M, W, Tu, Th,..."/>
+                                    <input type="text" id="hr" name="hr" class="form-control" placeholder="More specific: 930, 2, 11-1230,..."/>
+                                </div>
+                            </form>
+
+                            <button id="findSchedulePlan" class="btn btn-primary btn-lg center">Find Schedule</button>
+                        </div>
+
+                    </div>
+                </div>
 
                 <script>
                 var thetime = '13:14:15';
@@ -111,49 +120,25 @@
 
                 </script>
 
-                <div id="success" class="alert alert-success">Success!</div>
-                <div id="fail" class="alert alert-danger">Sorry, couldn't find any class. 
+                <br>
 
-                <?php //Chooses a random number 
+                <div class="row">
 
-                $num = Rand (1,10); 
-                //Based on the random number, gives a quote 
-                switch ($num) {
-                    case 1: echo "Go feed the birds.";
-                    break;
-                    case 2: echo "Andddd an apple a day keeps the doctor away.";
-                    break;
-                    case 3: echo "Elmo loves Dorthy.";
-                    break;
-                    case 4: echo "I'm off to see the wizards.";
-                    break;
-                    case 5: echo "But tomorrow is another day.";
-                    break;
-                    case 6: echo "Oh yeah, I need to sleep. Zzzzz.";
-                    break;
-                    case 7: echo "Want some BBQ chicken dipped in sweet and spicy sauce with ten cheese sticks on the side?";
-                    break;
-                    case 8: echo "Time for tea.";
-                    break;
-                    case 9: echo "No soup for you!";
-                    break;
-                    case 10: echo "Quiz time: What does Cafe 3 serve today? A. Roasted chicken B. Grilled chicken C. Fried chicken D. Curry chicken";
-                    break;
-                }
-
-                ?>
+                <div id="success" class="alert alert-info"></div>
+                <div id="fail" class="alert alert-warning"></div>
+                <!-- <div id="motivationalMessage" class="alert alert-danger"></div> -->
 
                 </div>
 
-                <div id="noBuilding" class="alert alert-danger">That's not really a building name, check the list below!</div>
+                <div id="noBuilding" class="alert alert-warning">That's not really a building name, check the list below!</div>
 
             </div>
 
         </div>
 
-        <div class="row">
+        <div id="listOfBuildings" class="row">
 
-            <h3>List of buildings:</h3>
+            <h3 class="center">List of buildings:</h3>
 
             <div class="col-md-4" id="buildingListAtoG"><h4 class="center">A-G</h4></span></div>
             <script type="text/javascript">
@@ -214,21 +199,52 @@
 
     <script>
     $(document).ready(function() {
-        $("div a").click(function() {
+        $("#listOfBuildings a").click(function() {
             var value = $(this).html();
-            var input = $('#building');
-            input.val(value);
+            $('#buildingRealtime').val(value);
+            $('#buildingPlan').val(value);
         });
     });
 
-    $("#findSchedule").click(function(event) {
+    var messages = ["How about we go and feed the birds?", "Andddd an apple a day keeps the doctor away.",
+    "I'm off to see the wizards.", "But tomorrow is another day.", "Oh yeah, I need to sleep. Zzzzz.",
+    "Want some BBQ chicken dipped in sweet and spicy sauce and ten cheese sticks on the side? Yum.", "Time for tea.", "No soup for you!",
+    "Quiz time. What did Cafe 3 serve today? a.roasted chicken b.grilled chicken c.fried chicken or d.curry chicken",
+    "Squirrels squirrels squirrels squirrels squirrels"];
+
+    $("#findScheduleRealtime").click(function(event) {
         event.preventDefault();
         $(".alert").hide();
-        if ($("#building").val() != "") {
+        if ($("#buildingRealtime").val() != "") {
             $.ajax({
                 url: 'scraper.php',
                 data: {
-                    'building': $("#building").val()
+                    'building': $("#buildingRealtime").val()
+                },
+                success: function(response) {
+                    if (response == '') {
+                        $("#fail").html("Sorry, couldn't find any class... " + messages[Math.floor((Math.random() * 10))]).fadeIn();
+                    }
+                    else {
+                        $("#success").html(response).fadeIn();
+                    }
+                }
+            });
+        } else {
+            $("#noBuilding").fadeIn();
+        }
+    });
+
+    $("#findSchedulePlan").click(function(event) {
+        event.preventDefault();
+        $(".alert").hide();
+        if ($("#buildingPlan").val() != "") {
+            $.ajax({
+                url: 'scraper.php',
+                data: {
+                    'building': $("#buildingPlan").val(),
+                    'dw': $("#dw").val(),
+                    'hr': $("#hr").val()
                 },
                 success: function(response) {
                     if (response == '') {
