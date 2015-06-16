@@ -20,8 +20,8 @@
     function initialize() {
         var mapDiv = document.getElementById('map-canvas');
         var map = new google.maps.Map(mapDiv, {
-            center: new google.maps.LatLng(37.872208, -122.259493),
-            zoom: 17,
+            center: new google.maps.LatLng(37.874, -122.258),
+            zoom: 18,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         });
 
@@ -30,16 +30,38 @@
         //override the built-in setContent-method
         google.maps.InfoWindow.prototype.setContent = function (content) {
         //when argument is a node
-        if (content.querySelector) {
-        //search for the address
-            var addr = content.querySelector('.gm-title');
-            if (addr) {
-                buildingName = addr.textContent.split(" ")[0];
+            if (content.querySelector) {
+            //search for the address
+                var title = content.querySelector('.gm-title').textContent.split(" ");
+                var addr = content.querySelector('.gm-basicinfo .gm-addr').textContent.split(" ");
+                
+                // when address doesn't have number
+                if (isNaN(parseInt(addr))) {
+                    // click on name + Hall: Hildebrand Hall, Davis Hall
+                    // Bancroft Lib-South Hall Rd, LeConte Hall-South Hall Rd
+                    // Hearst Memorial Mining Building
+                    if (addr[0] === "Berkeley," || title[1] === "Hall" || title[1] === "Library" || title[2] === "Library") {
+                        var buildingName = title[0].replace(/[^\w\s]/gi, '');
+                    // special name: O'Brien Hall
+                    } else {
+                        var buildingName = addr[0].replace(/[^\w\s]/gi, '');
+                    }
+                    //leave the function here 
+                    //when you don't want the InfoWindow to appear
+
+                // when address has number
+                } else {
+                    // Marvell Nano Lab, 502 Sutardja Dai Hall
+                    // College of Env Design, 230 Wurster Hall
+                    if (addr[2].replace(/[^\w\s]/gi, '') === "Hall" || addr[3].replace(/[^\w\s]/gi, '') === "Hall" && title[1] != "Hall") {
+                        var buildingName = addr[1].replace(/[^\w\s]/gi, '');
+                    // Moffitt Undergrad Lib, 350 University Drive
+                    } else {
+                        var buildingName = title[0].replace(/[^\w\s]/gi, '');
+                    }
+                }
                 $('#buildingRealtime').val(buildingName);
                 $('#buildingPlan').val(buildingName);
-                //leave the function here 
-                //when you don't want the InfoWindow to appear
-                }
             }
             //run the original setContent-method
             fx.apply(this, arguments);
@@ -82,18 +104,47 @@
         color:#000;
     }
 
+    h5>a, a:hover {
+        color:#000;
+    }
+
     .center {
         text-align: center;
     }
 
-    #map-canvas { width: 600px; height: 600px;}
+    #map-canvas {
+        width: 600px;
+        height: 600px;
+    }
+
+    @media screen and (max-width:600px) {
+        #map-canvas {
+            width:270px;
+            height:320px;
+        }
+    }
+
+    @media screen and (min-width:601px) {
+        #map-canvas {
+            width:470px;
+            height:520px;
+        }
+    }
+
+    @media screen and (min-width:1200px) {
+        #map-canvas {
+            width:600px;
+            height:600px;
+        }
+    }
 
     ul {
         list-style-type: none;
     }
 
     hr {
-        margin-top: 20px;
+        margin-top: 10px;
+        margin-bottom: 10px;
         border: 0;
         border-top: 2px solid #addff9;
         border-bottom: 2px solid #ffffff;
@@ -108,65 +159,70 @@
     <div class="container">
 
         <div class="row">
+            <div class="col-md-12">
+                <h5 class="black"><a href="http://runnyomelets.com"><span class="glyphicon glyphicon-arrow-left black" aria-hidden="true"></span>  Back</a></h4>
 
-            <div class="col-md-12 center">
-                <h4 class="center black"><a href="http://runnyomelets.com"><span class="glyphicon glyphicon-arrow-left black" aria-hidden="true"></span>  Back to RunnyOmelets</a></h4>
-                <h3 id="description"><a href="/calsched">Find classes in progress across the UC Berkeley campus</a></h3>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-5">
+
+            <h3 id="description"><a href="/calsched">Real-time class finder, UC Berkeley campus</a></h3>
 
                 <h4>Current: Fall 2015 Schedule</h4>
 
-                <h4>Today is 
-                    <?php date_default_timezone_set("America/Los_Angeles"); echo date("l"). ", "; ?>
+                <h4><?php date_default_timezone_set("America/Los_Angeles"); echo date("l"). ", "; ?>
                     <span id="hours"><?=date('H');?></span>:<span id="minutes"><?=date('i');?></span>:<span id="seconds"><?=date('s');?></span>
                 </h4>
 
+                <p>Click on a building name to start searching.</p>
+
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#realtime">Real time</a></li>
+                    <li><a data-toggle="tab" href="#plan">Plan</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div id="realtime" class="tab-pane fade in active">
+                        <form>
+                            <div class="form-group">
+                                <input type="text" id="buildingRealtime" name="buildingRealtime" class="form-control" placeholder="Where: Leconte, Hearst, Evans, Tan,..."/>
+                            </div>
+                        </form>
+                        <button id="findScheduleRealtime" class="btn btn-default btn-md center">Find Schedule</button>
+                    </div>
+
+                    <div id="plan" class="tab-pane fade in">
+                        <form>
+                            <div class="form-group">
+                                <input type="text" id="buildingPlan" name="buildingPlan" class="form-control" placeholder="Where: Dwinelle, Stanley, Barrows, Soda,..."/>
+                                <input type="text" id="dw" name="dw" class="form-control" placeholder="When: Monday, M, W, Tu, Th,..."/>
+                                <input type="text" id="hr" name="hr" class="form-control" placeholder="More specific: 930, 2, 11-1230,..."/>
+                            </div>
+                        </form>
+                        <button id="findSchedulePlan" class="btn btn-primary btn-md center">Find Schedule</button>
+                    </div>
+                </div>
+
                 <br>
 
-                <div class="col-md-5">
-                    <div id="map-canvas"></div>
+                <div class="row">
+                    <div id="success" class="alert alert-info"></div>
+                    <div id="fail" class="alert alert-warning"></div>
+                    <div id="noBuilding" class="alert alert-warning">That's not really a building name, check the list below!</div>
                 </div>
 
-                <div class="col-md-5 col-md-offset-2">
-                    <ul class="nav nav-tabs">
-                        <li class="active"><a data-toggle="tab" href="#realtime">Real time</a></li>
-                        <li><a data-toggle="tab" href="#plan">Plan</a></li>
-                    </ul>
+            </div>
 
-                    <div class="tab-content">
-                        <div id="realtime" class="tab-pane fade in active">
-                            <form>
-                                <div class="form-group">
-                                    <input type="text" id="buildingRealtime" name="buildingRealtime" class="form-control" placeholder="Where: Leconte, Hearst, Evans, Tan,..."/>
-                                </div>
-                            </form>
+            <div class="col-md-5">
+                <div id="map-canvas"></div>
+            </div>
+        </div>
 
-                            <button id="findScheduleRealtime" class="btn btn-primary btn-lg center">Find Schedule</button>
-
-                        </div>
-
-                        <div id="plan" class="tab-pane fade in">
-                            <form>
-                                <div class="form-group">
-                                    <input type="text" id="buildingPlan" name="buildingPlan" class="form-control" placeholder="Where: Dwinelle, Stanley, Barrows, Soda,..."/>
-                                    <input type="text" id="dw" name="dw" class="form-control" placeholder="When: Monday, M, W, Tu, Th,..."/>
-                                    <input type="text" id="hr" name="hr" class="form-control" placeholder="More specific: 930, 2, 11-1230,..."/>
-                                </div>
-                            </form>
-
-                            <button id="findSchedulePlan" class="btn btn-primary btn-lg center">Find Schedule</button>
-                        </div>
-
-                    </div>
-
-                    <br>
-
-                    <div class="row">
-                        <div id="success" class="alert alert-info"></div>
-                        <div id="fail" class="alert alert-warning"></div>
-                        <div id="noBuilding" class="alert alert-warning">That's not really a building name, check the list below!</div>
-                    </div>
-                        
-                </div>
+        <hr>
 
                 <script>
                 var thetime = '13:14:15';
@@ -201,24 +257,6 @@
                 }
 
                 </script>
-
-                <br>
-
-                <div class="row">
-
-                <div id="success" class="alert alert-info"></div>
-                <div id="fail" class="alert alert-warning"></div>
-                <!-- <div id="motivationalMessage" class="alert alert-danger"></div> -->
-
-                </div>
-
-                <div id="noBuilding" class="alert alert-warning">That's not really a building name, check the list below!</div>
-
-            </div>
-
-        </div>
-
-        <br>
 
         <div id="listOfBuildings" class="row">
 
