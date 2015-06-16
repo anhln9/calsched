@@ -6,22 +6,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title>Find classes in progress</title>
-    <!-- App is deployed at https://calsched.herokuapp.com -->
+    <!-- App is deployed at https://calsched.herokuapp.com or http://runnyomelets.com-->
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWzWXTmQHUU3OHr2bKeRUn4dNE5PUtpxk"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
     
+    <script type="text/javascript">
+    function initialize() {
+        var mapDiv = document.getElementById('map-canvas');
+        var map = new google.maps.Map(mapDiv, {
+            center: new google.maps.LatLng(37.872208, -122.259493),
+            zoom: 17,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+
+        //store the original setContent-function
+        var fx = google.maps.InfoWindow.prototype.setContent;
+        //override the built-in setContent-method
+        google.maps.InfoWindow.prototype.setContent = function (content) {
+        //when argument is a node
+        if (content.querySelector) {
+        //search for the address
+            var addr = content.querySelector('.gm-title');
+            if (addr) {
+                buildingName = addr.textContent.split(" ")[0];
+                $('#buildingRealtime').val(buildingName);
+                $('#buildingPlan').val(buildingName);
+                //leave the function here 
+                //when you don't want the InfoWindow to appear
+                }
+            }
+            //run the original setContent-method
+            fx.apply(this, arguments);
+        };
+    }
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+            // google.maps.event.addListener(rectangle, 'click', function(args) {
+            //     var url = "https://maps.googleapis.com/maps/api/geocode/xml?latlng=" + args.latLng.lat() + "," + args.latLng.lng() + "&key=AIzaSyDWzWXTmQHUU3OHr2bKeRUn4dNE5PUtpxk";
+            //     $.ajax({
+            //         type: "GET",
+            //         url: url,
+            //         dataType: "xml",
+            //         success: processXML,
+            //         error: error
+            //     });
+
+            //     function error() {
+            //         $("#fail").fadeIn();
+            //     }
+
+            //     function processXML(xml) {
+            //         $(xml).find("address_component").each(function() {
+            //             if ($(this).find("type").text() == "route") {
+            //                 $('#buildingRealtime').val($(this).find("long_name").text());
+            //             }
+            //         });
+            //     }
+            // });
+    </script>
+
     <style>
 
     .alert {
         display:none;
     }
 
+    #description>a, a:hover {
+        color:#000;
+    }
+
     .center {
         text-align: center;
     }
+
+    #map-canvas { width: 600px; height: 600px;}
 
     ul {
         list-style-type: none;
@@ -44,8 +109,9 @@
 
         <div class="row">
 
-            <div class="col-md-6 col-md-offset-3 center">
-                <h3>Find classes in progress across campus</h3>
+            <div class="col-md-12 center">
+                <h4 class="center black"><a href="http://runnyomelets.com"><span class="glyphicon glyphicon-arrow-left black" aria-hidden="true"></span>  Back to RunnyOmelets</a></h4>
+                <h3 id="description"><a href="/calsched">Find classes in progress across the UC Berkeley campus</a></h3>
 
                 <h4>Current: Fall 2015 Schedule</h4>
 
@@ -54,7 +120,13 @@
                     <span id="hours"><?=date('H');?></span>:<span id="minutes"><?=date('i');?></span>:<span id="seconds"><?=date('s');?></span>
                 </h4>
 
-                <div>
+                <br>
+
+                <div class="col-md-5">
+                    <div id="map-canvas"></div>
+                </div>
+
+                <div class="col-md-5 col-md-offset-2">
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-toggle="tab" href="#realtime">Real time</a></li>
                         <li><a data-toggle="tab" href="#plan">Plan</a></li>
@@ -69,6 +141,7 @@
                             </form>
 
                             <button id="findScheduleRealtime" class="btn btn-primary btn-lg center">Find Schedule</button>
+
                         </div>
 
                         <div id="plan" class="tab-pane fade in">
@@ -84,6 +157,15 @@
                         </div>
 
                     </div>
+
+                    <br>
+
+                    <div class="row">
+                        <div id="success" class="alert alert-info"></div>
+                        <div id="fail" class="alert alert-warning"></div>
+                        <div id="noBuilding" class="alert alert-warning">That's not really a building name, check the list below!</div>
+                    </div>
+                        
                 </div>
 
                 <script>
@@ -136,11 +218,14 @@
 
         </div>
 
+        <br>
+
         <div id="listOfBuildings" class="row">
 
             <h3 class="center">List of buildings:</h3>
 
             <div class="col-md-4" id="buildingListAtoG"><h4 class="center">A-G</h4></span></div>
+
             <script type="text/javascript">
             $.getJSON( "buildingsAtoG.json", function( data ) {
                 console.log(data);
@@ -210,7 +295,7 @@
     "I'm off to see the wizards.", "But tomorrow is another day.", "Oh yeah, I need to sleep. Zzzzz.",
     "Want some BBQ chicken dipped in sweet and spicy sauce and ten cheese sticks on the side? Yum.", "Time for tea.", "No soup for you!",
     "Quiz time. What did Cafe 3 serve today? a.roasted chicken b.grilled chicken c.fried chicken or d.curry chicken",
-    "Squirrels squirrels squirrels squirrels squirrels"];
+    "Squirrels squirrels squirrels squirrels squirrels", "[Luke:] I can’t believe it. [Yoda:] That is why you fail."];
 
     $("#findScheduleRealtime").click(function(event) {
         event.preventDefault();
@@ -223,7 +308,7 @@
                 },
                 success: function(response) {
                     if (response == '') {
-                        $("#fail").html("Sorry, couldn't find any class... " + messages[Math.floor((Math.random() * 10))]).fadeIn();
+                        $("#fail").html("Sorry, couldn't find any class... " + messages[Math.floor((Math.random() * 11))]).fadeIn();
                     }
                     else {
                         $("#success").html(response).fadeIn();
