@@ -1,6 +1,7 @@
 <?php
 date_default_timezone_set("America/Los_Angeles");
 
+$semester = $_REQUEST['semester'];
 $building = $_REQUEST['building'];
 $building = str_replace(" ", "", $building);
 
@@ -41,13 +42,11 @@ if ($hr > 12 && $hr < 20) {
 	$classtime = $hr;
 }
 
-$contents = file_get_contents("http://osoc.berkeley.edu/OSOC/osoc?p_term=FL&p_day=".$weekday."&p_bldg=".$building."&p_hour=".$classtime);
+$contents = file_get_contents("http://osoc.berkeley.edu/OSOC/osoc?p_term=".$semester."&p_day=".$weekday."&p_bldg=".$building."&p_hour=".$classtime);
 
-preg_match_all('/CLASS="coursetitle"><B>(.*?)&nbsp;<INPUT TYPE="submit" VALUE="\(catalog description\)" class="button b buttonrender"><\/B><\/TD><\/TR><\/FORM><TR><TD ALIGN=RIGHT VALIGN=TOP NOWRAP>
+preg_match_all('/CLASS="coursetitle"><B>(.*?)&nbsp;<input type="submit" value="\(catalog description\)" class="button b buttonrender" \/><\/B><\/TD><\/TR><\/form><TR><TD ALIGN=RIGHT VALIGN=TOP NOWRAP>
            <FONT FACE="Helvetica, Arial, sans-serif" SIZE="1"><B>Location:&#160;<\/B><\/FONT><\/TD><TD NOWRAP><TT>(.*?)</m', $contents, $titles);
 
 foreach ($titles[1] as $index => $title) {
 	echo $title . " | " . $titles[2][$index], '<br>';
 }
-
-?>

@@ -15,84 +15,11 @@
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWzWXTmQHUU3OHr2bKeRUn4dNE5PUtpxk"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
-    
-    <script type="text/javascript">
-    function initialize() {
-        var mapDiv = document.getElementById('map-canvas');
-        var map = new google.maps.Map(mapDiv, {
-            center: new google.maps.LatLng(37.874, -122.258),
-            zoom: 18,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        });
+    <script src="/calsched/javascripts/map.js"></script>
 
-        //store the original setContent-function
-        var fx = google.maps.InfoWindow.prototype.setContent;
-        //override the built-in setContent-method
-        google.maps.InfoWindow.prototype.setContent = function (content) {
-        //when argument is a node
-            if (content.querySelector) {
-            //search for the address
-                var title = content.querySelector('.gm-title').textContent.split(" ");
-                var addr = content.querySelector('.gm-basicinfo .gm-addr').textContent.split(" ");
-                
-                // when address doesn't have number
-                if (isNaN(parseInt(addr))) {
-                    // click on name + Hall: Hildebrand Hall, Davis Hall
-                    // Bancroft Lib-South Hall Rd, LeConte Hall-South Hall Rd
-                    // Hearst Memorial Mining Building
-                    if (addr[0] === "Berkeley," || title[1] === "Hall" || title[1] === "Library" || title[2] === "Library") {
-                        var buildingName = title[0].replace(/[^\w\s]/gi, '');
-                    // special name: O'Brien Hall
-                    } else {
-                        var buildingName = addr[0].replace(/[^\w\s]/gi, '');
-                    }
-                    //leave the function here 
-                    //when you don't want the InfoWindow to appear
-
-                // when address has number
-                } else {
-                    // Marvell Nano Lab, 502 Sutardja Dai Hall
-                    // College of Env Design, 230 Wurster Hall
-                    if (addr[2].replace(/[^\w\s]/gi, '') === "Hall" || addr[3].replace(/[^\w\s]/gi, '') === "Hall" && title[1] != "Hall") {
-                        var buildingName = addr[1].replace(/[^\w\s]/gi, '');
-                    // Moffitt Undergrad Lib, 350 University Drive
-                    } else {
-                        var buildingName = title[0].replace(/[^\w\s]/gi, '');
-                    }
-                }
-                $('#buildingRealtime').val(buildingName);
-                $('#buildingPlan').val(buildingName);
-            }
-            //run the original setContent-method
-            fx.apply(this, arguments);
-        };
-    }
-
-    google.maps.event.addDomListener(window, 'load', initialize);
-
-            // google.maps.event.addListener(rectangle, 'click', function(args) {
-            //     var url = "https://maps.googleapis.com/maps/api/geocode/xml?latlng=" + args.latLng.lat() + "," + args.latLng.lng() + "&key=AIzaSyDWzWXTmQHUU3OHr2bKeRUn4dNE5PUtpxk";
-            //     $.ajax({
-            //         type: "GET",
-            //         url: url,
-            //         dataType: "xml",
-            //         success: processXML,
-            //         error: error
-            //     });
-
-            //     function error() {
-            //         $("#fail").fadeIn();
-            //     }
-
-            //     function processXML(xml) {
-            //         $(xml).find("address_component").each(function() {
-            //             if ($(this).find("type").text() == "route") {
-            //                 $('#buildingRealtime').val($(this).find("long_name").text());
-            //             }
-            //         });
-            //     }
-            // });
-    </script>
+    <script src="/calsched/javascripts/clock.js"></script>
+    <script src="/calsched/javascripts/buildings.js"></script>
+    <script src="/calsched/javascripts/search.js"></script>
 
     <style>
 
@@ -169,16 +96,29 @@
 
         <div class="row">
             <div class="col-md-5">
+                <h4><a href="/calsched/api/osoc-berkeley-schedule.json">Get API</a></h4>
+                <h3 id="description"><a href="/calsched">UC Berkeley Class Lookup</a></h3>
 
-            <h3 id="description"><a href="/calsched">Real-time class finder, UC Berkeley campus</a></h3>
+                <div class="row">
+                    <div class="col-md-3">
+                        <h4>Term:</h4>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="radio">
+                            <label><input type="radio" id="semester" value="FL" name="Semester" checked="checked">Fall</label>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="radio">
+                            <label><input type="radio" id="semester" value="SP" name="Semester">Spring</label>
+                        </div>
+                    </div>
+                </div>
 
-                <h4>Current: Fall 2015 Schedule</h4>
 
                 <h4><?php date_default_timezone_set("America/Los_Angeles"); echo date("l"). ", "; ?>
                     <span id="hours"><?=date('H');?></span>:<span id="minutes"><?=date('i');?></span>:<span id="seconds"><?=date('s');?></span>
                 </h4>
-
-                <p>Click on a building name to start searching.</p>
 
                 <ul class="nav nav-tabs">
                     <li class="active"><a data-toggle="tab" href="#realtime">Real time</a></li>
@@ -211,7 +151,7 @@
 
                 <div class="row">
                     <div id="success" class="alert alert-info"></div>
-                    <div id="fail" class="alert alert-warning"></div>
+                    <div id="fail" class="alert alert-warning">Sorry, somehow we could not find anything.</div>
                     <div id="noBuilding" class="alert alert-warning">That's not really a building name, check the list below!</div>
                 </div>
 
@@ -224,89 +164,15 @@
 
         <hr>
 
-                <script>
-                var thetime = '13:14:15';
-                // this would be something like: var thetime = '<?=date('H:i:s');?>';
-                var arr_time = thetime.split(':');
-                var ss = arr_time[2]; var mm = arr_time[1]; var hh = arr_time[0];
-                var update_ss = setInterval(updatetime, 1000);
-
-                function updatetime() {
-                    ss++;
-                    if (ss < 10) {
-                        ss = '0' + ss;
-                    }
-                    if (ss == 60) {
-                        ss = '00'; mm++;
-                        if (mm < 10) {
-                            mm = '0' + mm;
-                        }
-                        if (mm == 60) {
-                            mm = '00'; hh++;
-                            if (hh < 10) {
-                                hh = '0' + hh;
-                            }
-                            if (hh == 24) {
-                                hh = '00';
-                            }
-                            $("#hours").html(hh);
-                        }
-                        $("#minutes").html(mm);
-                    }
-                    $("#seconds").html(ss);
-                }
-
-                </script>
-
         <div id="listOfBuildings" class="row">
 
             <h3 class="center">List of buildings:</h3>
 
             <div class="col-md-4" id="buildingListAtoG"><h4 class="center">A-G</h4></span></div>
 
-            <script type="text/javascript">
-            $.getJSON( "buildingsAtoG.json", function( data ) {
-                console.log(data);
-                var items = [];
-                $.each( data, function( key, row ) {
-                    items.push( " <li>"+row.Name+" <a href='#'>"+row.Abbr+"</a></li>" );
-                });
-
-                $( "<ul/>", {
-                    html: items.join( "" )
-                }).appendTo( "#buildingListAtoG" );
-            });
-            </script>
-
             <div class="col-md-4" id="buildingListHtoM"><h4 class="center">H-M</h4></div>
-            <script type="text/javascript">
-            $.getJSON( "buildingsHtoM.json", function( data ) {
-                console.log(data);
-                var items = [];
-                $.each( data, function( key, row ) {
-                    items.push( " <li>"+row.Name+" <a href='#'>"+row.Abbr+"</a></li>" );
-                });
-
-                $( "<ul/>", {
-                    html: items.join( "" )
-                }).appendTo( "#buildingListHtoM" );
-            });
-            </script>
 
             <div class="col-md-4" id="buildingListNtoZ"><h4 class="center">N-Z</h4></div>
-            <script type="text/javascript">
-            $.getJSON( "buildingsNtoZ.json", function( data ) {
-                console.log(data);
-                var items = [];
-                $.each( data, function( key, row ) {
-                    items.push( " <li>"+row.Name+" <a href='#'>"+row.Abbr+"</a></li>" );
-                });
-
-                $( "<ul/>", {
-                    html: items.join( "" )
-                }).appendTo( "#buildingListNtoZ" );
-            });
-            </script>
 
         </div>
 
@@ -327,60 +193,6 @@
             $('#buildingRealtime').val(value);
             $('#buildingPlan').val(value);
         });
-    });
-
-    var messages = ["How about we go and feed the birds?", "Andddd an apple a day keeps the doctor away.",
-    "I'm off to see the wizards.", "But tomorrow is another day.", "Oh yeah, I need to sleep. Zzzzz.",
-    "Want some BBQ chicken dipped in sweet and spicy sauce and ten cheese sticks on the side? Yum.", "Time for tea.", "No soup for you!",
-    "Quiz time. What did Cafe 3 serve today? a.roasted chicken b.grilled chicken c.fried chicken or d.curry chicken",
-    "Squirrels squirrels squirrels squirrels squirrels", "[Luke:] I can’t believe it. [Yoda:] That is why you fail."];
-
-    $("#findScheduleRealtime").click(function(event) {
-        event.preventDefault();
-        $(".alert").hide();
-        if ($("#buildingRealtime").val() != "") {
-            $.ajax({
-                url: 'scraper.php',
-                data: {
-                    'building': $("#buildingRealtime").val()
-                },
-                success: function(response) {
-                    if (response == '') {
-                        $("#fail").html("Sorry, couldn't find any class... " + messages[Math.floor((Math.random() * 11))]).fadeIn();
-                    }
-                    else {
-                        $("#success").html(response).fadeIn();
-                    }
-                }
-            });
-        } else {
-            $("#noBuilding").fadeIn();
-        }
-    });
-
-    $("#findSchedulePlan").click(function(event) {
-        event.preventDefault();
-        $(".alert").hide();
-        if ($("#buildingPlan").val() != "") {
-            $.ajax({
-                url: 'scraper.php',
-                data: {
-                    'building': $("#buildingPlan").val(),
-                    'dw': $("#dw").val(),
-                    'hr': $("#hr").val()
-                },
-                success: function(response) {
-                    if (response == '') {
-                        $("#fail").fadeIn();
-                    }
-                    else {
-                        $("#success").html(response).fadeIn();
-                    }
-                }
-            });
-        } else {
-            $("#noBuilding").fadeIn();
-        }
     });
 
     </script>
